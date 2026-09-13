@@ -53,6 +53,7 @@ final class _FilterBar extends StatelessWidget {
                       _TransactionFilter.errors => 'Errors',
                     }),
                     selected: filter == selected,
+                    showCheckmark: false,
                     onSelected: (_) => onChanged(filter),
                   ),
                 ),
