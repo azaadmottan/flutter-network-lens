@@ -4,6 +4,7 @@ library;
 export 'src/core/flutter_lens.dart';
 export 'src/core/flutter_lens_config.dart';
 export 'src/integrations/dio/flutter_lens_dio_interceptor.dart';
+export 'src/integrations/get_connect/flutter_lens_get_connect.dart';
 export 'src/integrations/http/flutter_lens_http_client.dart';
 export 'src/inspector/flutter_lens_inspector.dart';
 export 'src/models/network_error.dart';
