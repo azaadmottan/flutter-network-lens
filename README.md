@@ -6,7 +6,7 @@ and duration directly in your app, without connecting to a development machine.
 
 ## Features
 
-- Capture completed requests and client errors from Dio and `package:http`.
+- Capture completed requests and client errors from Dio, `package:http`, and GetX GetConnect.
 - Browse history and search by URL, method, or status.
 - Inspect request and response bodies, headers, query parameters, and timing.
 - Restore local history with `shared_preferences` and limit retained transactions.
@@ -109,6 +109,35 @@ Closing the wrapper closes that client. Calls through other clients or top-level
 For `send()` calls, consume the response stream: successful transactions are
 recorded when the stream finishes. Standard `get()` and `post()` calls consume
 it for you. Multipart and streamed request bodies are not captured by this adapter.
+
+### GetX GetConnect
+
+Attach FlutterLens after configuring each `GetConnect` provider or client:
+
+```dart
+import 'package:flutter_lens/flutter_lens.dart';
+import 'package:get/get_connect.dart';
+
+final api = GetConnect()..baseUrl = 'https://your-api.example.com';
+FlutterLensGetConnect.attach(api);
+
+final response = await api.get('/profile');
+```
+
+GetConnect's native modifiers preserve its networking behavior. FlutterLens
+captures the method, URL, query parameters, headers, status, timing, response
+headers, and decoded response body. GetConnect does not expose a dedicated error
+modifier; a failed response without an HTTP status is recorded as an error.
+Request bodies are not captured by this adapter because GetConnect provides them
+as a one-shot stream, which FlutterLens must not consume.
+
+### Other networking libraries
+
+Libraries built on Dio are covered when they use the instrumented Dio instance
+(for example, Retrofit-generated clients). Libraries that accept an `http.Client`
+are covered by passing `FlutterLensHttpClient`. A library with its own HTTP stack
+needs a dedicated FlutterLens adapter and should only be supported where it
+offers a non-invasive request/response hook.
 
 ## Open the inspector
 

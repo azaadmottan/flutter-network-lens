@@ -12,3 +12,4 @@ Initial implementation, prepared for the first release.
 - Mask configured sensitive headers and structured fields on new records.
 - Add package documentation, an example, Flutter CI, and Dependabot updates.
 - Add masked cURL and debug-report generation, clipboard actions, and native report sharing.
+- Add a GetX GetConnect adapter for request/response capture.
