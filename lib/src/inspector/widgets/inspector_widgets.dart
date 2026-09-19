@@ -1,4 +1,4 @@
-part of '../flutter_lens_inspector.dart';
+part of '../flutter_network_lens_inspector.dart';
 
 final class _InspectorSearchField extends StatelessWidget {
   const _InspectorSearchField({required this.controller, required this.onChanged});

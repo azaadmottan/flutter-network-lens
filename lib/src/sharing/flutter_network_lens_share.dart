@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:share_plus/share_plus.dart';
 
-/// Opens the native share sheet for FlutterLens-generated text.
-final class FlutterLensShare {
-  FlutterLensShare._();
+/// Opens the native share sheet for FlutterNetworkLens-generated text.
+final class FlutterNetworkLensShare {
+  FlutterNetworkLensShare._();
 
   /// Shares [text] using the platform share sheet.
   static Future<void> text(

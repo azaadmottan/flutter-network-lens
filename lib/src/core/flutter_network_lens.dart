@@ -2,22 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../inspector/flutter_lens_inspector.dart';
+import '../inspector/flutter_network_lens_inspector.dart';
 import '../models/network_transaction.dart';
 import '../privacy/network_data_masker.dart';
-import 'flutter_lens_config.dart';
+import 'flutter_network_lens_config.dart';
 import '../storage/local_network_storage.dart';
 import '../storage/network_storage.dart';
 
-/// Entry point and in-memory transaction registry for FlutterLens.
+/// Entry point and in-memory transaction registry for FlutterNetworkLens.
 ///
 /// HTTP client integrations call [record] only after their original request has
 /// completed. Failures in this observational layer are contained so that the
 /// host application's networking behavior remains unaffected.
-final class FlutterLens {
-  FlutterLens._();
+final class FlutterNetworkLens {
+  FlutterNetworkLens._();
 
-  static FlutterLensConfig _config = FlutterLensConfig();
+  static FlutterNetworkLensConfig _config = FlutterNetworkLensConfig();
   static final List<NetworkTransaction> _transactions = [];
   static final StreamController<List<NetworkTransaction>> _changes =
       StreamController<List<NetworkTransaction>>.broadcast();
@@ -35,7 +35,7 @@ final class FlutterLens {
     Set<String>? sensitiveBodyFieldNames,
     NetworkStorage? storage,
   }) async {
-    _config = FlutterLensConfig(
+    _config = FlutterNetworkLensConfig(
       enabled: enabled,
       maxTransactions: maxTransactions,
       environment: environment,
@@ -57,8 +57,8 @@ final class FlutterLens {
     }
   }
 
-  /// Current FlutterLens configuration.
-  static FlutterLensConfig get config => _config;
+  /// Current FlutterNetworkLens configuration.
+  static FlutterNetworkLensConfig get config => _config;
 
   /// A read-only snapshot of captured transactions, newest first.
   static List<NetworkTransaction> get transactions =>
@@ -82,7 +82,7 @@ final class FlutterLens {
       _emit();
       unawaited(_persist());
     } catch (_) {
-      // FlutterLens is observational and must stay invisible to the host app.
+      // FlutterNetworkLens is observational and must stay invisible to the host app.
     }
   }
 
@@ -96,11 +96,11 @@ final class FlutterLens {
     }
   }
 
-  /// Opens FlutterLens' in-app network inspector.
+  /// Opens FlutterNetworkLens' in-app network inspector.
   static Future<void> openInspector(BuildContext context) =>
       Navigator.of(context).push<void>(
         MaterialPageRoute<void>(
-          builder: (_) => const FlutterLensInspector(),
+          builder: (_) => const FlutterNetworkLensInspector(),
         ),
       );
 

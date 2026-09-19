@@ -1,24 +1,24 @@
 import 'package:get/get_connect.dart';
 
-import '../../core/flutter_lens.dart';
+import '../../core/flutter_network_lens.dart';
 import '../../models/network_error.dart';
 import '../../models/network_request.dart';
 import '../../models/network_response.dart';
 import '../../models/network_transaction.dart';
 
-/// Attaches FlutterLens capture to GetX's [GetConnect] HTTP client.
+/// Attaches FlutterNetworkLens capture to GetX's [GetConnect] HTTP client.
 ///
 /// It uses GetConnect's request and response modifiers without changing the
 /// original request or response returned to the application.
-final class FlutterLensGetConnect {
-  FlutterLensGetConnect._();
+final class FlutterNetworkLensGetConnect {
+  FlutterNetworkLensGetConnect._();
 
-  /// Registers FlutterLens capture modifiers on [connect].
+  /// Registers FlutterNetworkLens capture modifiers on [connect].
   ///
   /// Call this once for every [GetConnect] instance after configuring it.
   static void attach(GetConnect connect) => attachClient(connect.httpClient);
 
-  /// Registers FlutterLens capture modifiers on an existing [GetHttpClient].
+  /// Registers FlutterNetworkLens capture modifiers on an existing [GetHttpClient].
   static void attachClient(GetHttpClient client) {
     final recorder = _GetConnectRecorder();
     client
@@ -44,7 +44,7 @@ final class _GetConnectRecorder {
   void recordResponse(dynamic request, dynamic response) {
     final timing = _takeTiming(request);
     final statusCode = response.statusCode;
-    FlutterLens.record(
+    FlutterNetworkLens.record(
       NetworkTransaction(
         id: _nextId(timing.startedAt),
         request: NetworkRequest(

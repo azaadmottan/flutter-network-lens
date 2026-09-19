@@ -1,6 +1,6 @@
-# FlutterLens
+# FlutterNetworkLens
 
-A local, in-app network inspector for Flutter development and QA builds.
+A local, in-app network traffic tracker and inspector for Flutter development and QA builds.
 Connect your HTTP client, make a request, and inspect its headers, body, status,
 and duration directly in your app, without connecting to a development machine.
 
@@ -15,22 +15,22 @@ and duration directly in your app, without connecting to a development machine.
 - Copy request details, a masked cURL command, or a full debug report.
 - Share a masked debug report through the native platform share sheet.
 
-FlutterLens has no backend, accounts, or cloud sync.
+FlutterNetworkLens has no backend, accounts, or cloud sync.
 
 ## Installation
 
 Once the package is published on pub.dev:
 
 ```sh
-flutter pub add flutter_lens
+flutter pub add flutter_network_lens
 ```
 
 Until then, use a local checkout:
 
 ```yaml
 dependencies:
-  flutter_lens:
-    path: ../flutter-lens
+  flutter_network_lens:
+    path: ../flutter-network-lens
 ```
 
 Adjust the path to your checkout. Use a current stable Flutter SDK; validation of
@@ -38,16 +38,16 @@ the oldest supported SDK is still pending before publication.
 
 ## Initialize
 
-Initialize FlutterLens before sending requests:
+Initialize FlutterNetworkLens before sending requests:
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:flutter_lens/flutter_lens.dart';
+import 'package:flutter_network_lens/flutter_network_lens.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterLens.initialize(
-    enabled: const bool.fromEnvironment('ENABLE_FLUTTER_LENS'),
+  await FlutterNetworkLens.initialize(
+    enabled: const bool.fromEnvironment('ENABLE_FLUTTER_NETWORK_LENS'),
     maxTransactions: 200,
     environment: 'staging',
   );
@@ -58,7 +58,7 @@ Future<void> main() async {
 Enable capture for a development or QA build:
 
 ```sh
-flutter run --dart-define=ENABLE_FLUTTER_LENS=true
+flutter run --dart-define=ENABLE_FLUTTER_NETWORK_LENS=true
 ```
 
 The same define can be supplied to a release build. Capture defaults to `true`
@@ -75,10 +75,10 @@ to the Dio instance used by your application:
 
 ```dart
 import 'package:dio/dio.dart';
-import 'package:flutter_lens/flutter_lens.dart';
+import 'package:flutter_network_lens/flutter_network_lens.dart';
 
 final dio = Dio();
-dio.interceptors.add(FlutterLensDioInterceptor());
+dio.interceptors.add(FlutterNetworkLensDioInterceptor());
 final response = await dio.get('https://your-api.example.com/profile');
 ```
 
@@ -86,12 +86,12 @@ Use your own endpoint and handle responses and errors in your application.
 
 ### package:http
 
-Use `FlutterLensHttpClient` for the requests you want to capture:
+Use `FlutterNetworkLensHttpClient` for the requests you want to capture:
 
 ```dart
-import 'package:flutter_lens/flutter_lens.dart';
+import 'package:flutter_network_lens/flutter_network_lens.dart';
 
-final client = FlutterLensHttpClient();
+final client = FlutterNetworkLensHttpClient();
 try {
   final response = await client.get(
     Uri.parse('https://your-api.example.com/profile'),
@@ -102,7 +102,7 @@ try {
 }
 ```
 
-You can also wrap an existing client with `FlutterLensHttpClient(existingClient)`.
+You can also wrap an existing client with `FlutterNetworkLensHttpClient(existingClient)`.
 Closing the wrapper closes that client. Calls through other clients or top-level
 `http.get` functions are not captured automatically.
 
@@ -112,31 +112,31 @@ it for you. Multipart and streamed request bodies are not captured by this adapt
 
 ### GetX GetConnect
 
-Attach FlutterLens after configuring each `GetConnect` provider or client:
+Attach FlutterNetworkLens after configuring each `GetConnect` provider or client:
 
 ```dart
-import 'package:flutter_lens/flutter_lens.dart';
+import 'package:flutter_network_lens/flutter_network_lens.dart';
 import 'package:get/get_connect.dart';
 
 final api = GetConnect()..baseUrl = 'https://your-api.example.com';
-FlutterLensGetConnect.attach(api);
+FlutterNetworkLensGetConnect.attach(api);
 
 final response = await api.get('/profile');
 ```
 
-GetConnect's native modifiers preserve its networking behavior. FlutterLens
+GetConnect's native modifiers preserve its networking behavior. FlutterNetworkLens
 captures the method, URL, query parameters, headers, status, timing, response
 headers, and decoded response body. GetConnect does not expose a dedicated error
 modifier; a failed response without an HTTP status is recorded as an error.
 Request bodies are not captured by this adapter because GetConnect provides them
-as a one-shot stream, which FlutterLens must not consume.
+as a one-shot stream, which FlutterNetworkLens must not consume.
 
 ### Other networking libraries
 
 Libraries built on Dio are covered when they use the instrumented Dio instance
 (for example, Retrofit-generated clients). Libraries that accept an `http.Client`
-are covered by passing `FlutterLensHttpClient`. A library with its own HTTP stack
-needs a dedicated FlutterLens adapter and should only be supported where it
+are covered by passing `FlutterNetworkLensHttpClient`. A library with its own HTTP stack
+needs a dedicated FlutterNetworkLens adapter and should only be supported where it
 offers a non-invasive request/response hook.
 
 ## Open the inspector
@@ -145,7 +145,7 @@ Use a context below your application's `MaterialApp` / `Navigator`:
 
 ```dart
 FilledButton(
-  onPressed: () => FlutterLens.openInspector(context),
+  onPressed: () => FlutterNetworkLens.openInspector(context),
   child: const Text('Open network inspector'),
 )
 ```
@@ -170,14 +170,14 @@ uses a mock HTTP response without contacting a server.
 | `sensitiveBodyFieldNames` | Built-in names | Add structured field names to mask. |
 | `storage` | `LocalNetworkStorage()` | Supply a custom `NetworkStorage`. |
 
-Default storage uses `shared_preferences`; FlutterLens does not encrypt it.
+Default storage uses `shared_preferences`; FlutterNetworkLens does not encrypt it.
 Persistence is asynchronous and storage failures are caught. History is best
 effort, not an audit log. The transaction limit does not limit body size.
 
-Read `FlutterLens.transactions` for a snapshot, subscribe to
-`FlutterLens.transactionChanges` for updates, or call `FlutterLens.clear()` to
+Read `FlutterNetworkLens.transactions` for a snapshot, subscribe to
+`FlutterNetworkLens.transactionChanges` for updates, or call `FlutterNetworkLens.clear()` to
 clear memory and request deletion of persisted history. Custom integrations can
-submit completed `NetworkTransaction` objects with `FlutterLens.record()`.
+submit completed `NetworkTransaction` objects with `FlutterNetworkLens.record()`.
 
 ## Masking
 
@@ -189,7 +189,7 @@ Built-in names are matched case-insensitively:
 Add application-specific names during initialization:
 
 ```dart
-await FlutterLens.initialize(
+await FlutterNetworkLens.initialize(
   sensitiveHeaderNames: {'X-API-Key'},
   sensitiveBodyFieldNames: {'pin', 'sessionSecret'},
 );
@@ -221,4 +221,4 @@ and [the publishing checklist](docs/PUBLISHING.md) for remaining release checks.
 
 ## License
 
-FlutterLens is available under the [MIT License](LICENSE).
+FlutterNetworkLens is available under the [MIT License](LICENSE).

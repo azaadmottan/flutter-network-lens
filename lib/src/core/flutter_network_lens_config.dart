@@ -1,7 +1,7 @@
-/// Configuration for FlutterLens' in-memory capture layer.
-final class FlutterLensConfig {
-  /// Creates configuration for FlutterLens.
-  FlutterLensConfig({
+/// Configuration for FlutterNetworkLens' in-memory capture layer.
+final class FlutterNetworkLensConfig {
+  /// Creates configuration for FlutterNetworkLens.
+  FlutterNetworkLensConfig({
     this.enabled = true,
     this.maxTransactions = 200,
     this.environment,

@@ -4,28 +4,28 @@ import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 
-import '../../core/flutter_lens.dart';
+import '../../core/flutter_network_lens.dart';
 import '../../models/network_error.dart';
 import '../../models/network_request.dart';
 import '../../models/network_response.dart';
 import '../../models/network_transaction.dart';
 
-/// An [http.Client] that records calls in FlutterLens.
+/// An [http.Client] that records calls in FlutterNetworkLens.
 ///
 /// Use this client in place of `http.Client`. It delegates all networking to
 /// its wrapped client and preserves the original response stream for callers.
-final class FlutterLensHttpClient extends http.BaseClient {
+final class FlutterNetworkLensHttpClient extends http.BaseClient {
   /// Creates a capturing client.
   ///
   /// When [inner] is omitted, a default [http.Client] is used.
-  FlutterLensHttpClient([http.Client? inner]) : _inner = inner ?? http.Client();
+  FlutterNetworkLensHttpClient([http.Client? inner]) : _inner = inner ?? http.Client();
 
   final http.Client _inner;
   int _sequence = 0;
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    if (!FlutterLens.config.enabled) {
+    if (!FlutterNetworkLens.config.enabled) {
       return _inner.send(request);
     }
 
@@ -43,7 +43,7 @@ final class FlutterLensHttpClient extends http.BaseClient {
       );
     } catch (error, stackTrace) {
       stopwatch.stop();
-      FlutterLens.record(
+      FlutterNetworkLens.record(
         NetworkTransaction(
           id: _nextId(startedAt),
           request: capturedRequest,
@@ -74,7 +74,7 @@ final class FlutterLensHttpClient extends http.BaseClient {
       }
       recorded = true;
       stopwatch.stop();
-      FlutterLens.record(
+      FlutterNetworkLens.record(
         NetworkTransaction(
           id: _nextId(startedAt),
           request: request,
@@ -96,7 +96,7 @@ final class FlutterLensHttpClient extends http.BaseClient {
       }
       recorded = true;
       stopwatch.stop();
-      FlutterLens.record(
+      FlutterNetworkLens.record(
         NetworkTransaction(
           id: _nextId(startedAt),
           request: request,

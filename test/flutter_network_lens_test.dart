@@ -1,12 +1,12 @@
-import 'package:flutter_lens/flutter_lens.dart';
+import 'package:flutter_network_lens/flutter_network_lens.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('records a completed network transaction', () async {
-    await FlutterLens.initialize(storage: _MemoryStorage());
-    FlutterLens.clear();
+    await FlutterNetworkLens.initialize(storage: _MemoryStorage());
+    FlutterNetworkLens.clear();
 
-    FlutterLens.record(
+    FlutterNetworkLens.record(
       NetworkTransaction(
         id: 'request-1',
         request: NetworkRequest(
@@ -19,7 +19,7 @@ void main() {
       ),
     );
 
-    expect(FlutterLens.transactions.single.statusCode, 200);
+    expect(FlutterNetworkLens.transactions.single.statusCode, 200);
   });
 }
 

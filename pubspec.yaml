@@ -1,5 +1,5 @@
-name: flutter_lens
-description: A local, in-app network inspector for Flutter test and release builds.
+name: flutter_network_lens
+description: An in-app network traffic tracker and inspector for Flutter test and release builds.
 
 version: 0.1.0
 

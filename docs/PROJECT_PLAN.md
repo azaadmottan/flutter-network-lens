@@ -1,10 +1,10 @@
-# FlutterLens
+# FlutterNetworkLens
 
 > A local, in-app network inspector for Flutter test and release builds.
 
 ## 1. Project Overview
 
-**FlutterLens** is a Flutter developer/testing utility that allows developers and testers to inspect network API activity directly inside a Flutter application.
+**FlutterNetworkLens** is a Flutter developer/testing utility that allows developers and testers to inspect network API activity directly inside a Flutter application.
 
 The primary problem being solved:
 
@@ -17,13 +17,13 @@ The initial version focuses only on this local testing workflow: capture what th
 ```text
 Flutter Application
         ↓
-FlutterLens Network Interceptor
+FlutterNetworkLens Network Interceptor
         ↓
 Capture API Request/Response
         ↓
 Store locally
         ↓
-FlutterLens Inspector
+FlutterNetworkLens Inspector
         ↓
 Tester can inspect
         ↓
@@ -62,7 +62,7 @@ All captured information should remain local to the device.
 
 # 3. Scope Boundaries
 
-FlutterLens is intentionally a local debugging utility, not a debugging platform. It has no backend, cloud sync, accounts, web dashboard, remote debugging, team features, or unrelated observability/product infrastructure.
+FlutterNetworkLens is intentionally a local debugging utility, not a debugging platform. It has no backend, cloud sync, accounts, web dashboard, remote debugging, team features, or unrelated observability/product infrastructure.
 
 The current objective is to make the **local network-inspection and tester workflow excellent first**. Do not add product/platform features unless they directly improve that workflow.
 
@@ -72,7 +72,7 @@ The current objective is to make the **local network-inspection and tester workf
 
 ### Flutter Developer
 
-Uses FlutterLens while developing or testing an application.
+Uses FlutterNetworkLens while developing or testing an application.
 
 ### QA / Tester
 
@@ -90,10 +90,10 @@ A tester reports:
 
 > Login is not working.
 
-Instead of contacting the Flutter developer, the tester opens FlutterLens.
+Instead of contacting the Flutter developer, the tester opens FlutterNetworkLens.
 
 ```text
-FlutterLens
+FlutterNetworkLens
 
 Network
 
@@ -167,7 +167,7 @@ Recommended initial dependencies:
 
 Do not introduce unnecessary dependencies.
 
-FlutterLens must not be limited to Dio. It should support the HTTP clients used by Flutter applications through small, separate integrations/adapters. Dio is a valuable first integration, but the core transaction model, storage, masking, and inspector UI must remain HTTP-client agnostic so other clients can be supported without redesigning the package.
+FlutterNetworkLens must not be limited to Dio. It should support the HTTP clients used by Flutter applications through small, separate integrations/adapters. Dio is a valuable first integration, but the core transaction model, storage, masking, and inspector UI must remain HTTP-client agnostic so other clients can be supported without redesigning the package.
 
 ---
 
@@ -207,7 +207,7 @@ lib/
 ├── sharing/
 │   └── debug_report_share.dart
 │
-└── flutter_lens.dart
+└── flutter_network_lens.dart
 ```
 
 The exact folder structure can be adjusted if a better Flutter package architecture is justified, but responsibilities must remain separated.
@@ -305,14 +305,14 @@ Failed requests must not disappear from the history.
 
 ---
 
-# 10. FlutterLens Initialization
+# 10. FlutterNetworkLens Initialization
 
 The consuming application should have a simple integration API.
 
 Example:
 
 ```dart
-await FlutterLens.initialize(
+await FlutterNetworkLens.initialize(
   enabled: true,
 );
 ```
@@ -322,13 +322,13 @@ For Dio:
 ```dart
 final dio = Dio();
 
-dio.interceptors.add(FlutterLensDioInterceptor());
+dio.interceptors.add(FlutterNetworkLensDioInterceptor());
 ```
 
 For `package:http`:
 
 ```dart
-final client = FlutterLensHttpClient();
+final client = FlutterNetworkLensHttpClient();
 final response = await client.get(Uri.parse('https://api.example.com/profile'));
 ```
 
@@ -338,12 +338,12 @@ Other supported clients should have equally small integration APIs. The exact AP
 
 # 11. Inspector Access
 
-FlutterLens should provide a simple way to open the inspector.
+FlutterNetworkLens should provide a simple way to open the inspector.
 
 Possible API:
 
 ```dart
-FlutterLens.openInspector(context);
+FlutterNetworkLens.openInspector(context);
 ```
 
 or a configurable floating developer button.
@@ -353,7 +353,7 @@ The implementation should support a simple initial workflow such as:
 ```text
 Application
      ↓
-FlutterLens button/menu
+FlutterNetworkLens button/menu
      ↓
 Network Inspector
 ```
@@ -370,7 +370,7 @@ Example:
 
 ```text
 ┌─────────────────────────────────────┐
-│ FlutterLens                   ⚙    │
+│ FlutterNetworkLens                   ⚙    │
 ├─────────────────────────────────────┤
 │ Search requests...                  │
 ├─────────────────────────────────────┤
@@ -551,7 +551,7 @@ access_token: ********
 
 Do not accidentally expose credentials through the inspector or sharing feature.
 
-FlutterLens masks values before they are kept in memory or written to local
+FlutterNetworkLens masks values before they are kept in memory or written to local
 storage. This protection therefore also applies to the inspector and future
 copy/share utilities. The defaults cover the header names `Authorization`,
 `Cookie`, `Set-Cookie`, and `Proxy-Authorization`, along with the body fields
@@ -560,7 +560,7 @@ copy/share utilities. The defaults cover the header names `Authorization`,
 Add application-specific sensitive names during initialization:
 
 ```dart
-await FlutterLens.initialize(
+await FlutterNetworkLens.initialize(
   sensitiveHeaderNames: {'X-API-Key'},
   sensitiveBodyFieldNames: {'pin', 'sessionSecret'},
 );
@@ -644,7 +644,7 @@ Implement a configurable maximum number of stored transactions.
 Example:
 
 ```dart
-await FlutterLens.initialize(
+await FlutterNetworkLens.initialize(
   maxTransactions: 200,
 );
 ```
@@ -676,7 +676,7 @@ Share
 The generated report should contain:
 
 ```text
-FlutterLens Debug Report
+FlutterNetworkLens Debug Report
 
 App:
 Example App
@@ -708,7 +708,7 @@ Response Body:
 
 The report should be readable by a human.
 
-Do not require the recipient to have FlutterLens installed.
+Do not require the recipient to have FlutterNetworkLens installed.
 
 ---
 
@@ -754,27 +754,27 @@ Do not expose masked secrets.
 
 This is one of the primary goals of the project.
 
-FlutterLens must be usable in a tester/release build.
+FlutterNetworkLens must be usable in a tester/release build.
 
 Example:
 
 ```dart
-await FlutterLens.initialize(
+await FlutterNetworkLens.initialize(
   enabled: true,
 );
 ```
 
-The consuming application should be able to decide whether FlutterLens is enabled.
+The consuming application should be able to decide whether FlutterNetworkLens is enabled.
 
 For example:
 
 ```dart
-const bool enableFlutterLens = true;
+const bool enableFlutterNetworkLens = true;
 ```
 
 or environment-based configuration.
 
-Do not force FlutterLens to be enabled in every production build.
+Do not force FlutterNetworkLens to be enabled in every production build.
 
 ---
 
@@ -817,7 +817,7 @@ The consuming application should be able to provide custom environment informati
 Example:
 
 ```dart
-await FlutterLens.initialize(
+await FlutterNetworkLens.initialize(
   environment: 'staging',
 );
 ```
@@ -887,7 +887,7 @@ A good read-only viewer is sufficient.
 
 # 30. Error Handling
 
-FlutterLens itself must not break the consuming application.
+FlutterNetworkLens itself must not break the consuming application.
 
 If:
 
@@ -900,7 +900,7 @@ inspector fails
 
 the original API request must continue working normally.
 
-FlutterLens should behave as an observational/debugging layer.
+FlutterNetworkLens should behave as an observational/debugging layer.
 
 The application's networking behavior must have priority.
 
@@ -980,7 +980,7 @@ Expected result:
 ```text
 API request
     ↓
-FlutterLens
+FlutterNetworkLens
     ↓
 Transaction object
 ```
@@ -1026,7 +1026,7 @@ Expected result:
 ```text
 Flutter App
      ↓
-FlutterLens
+FlutterNetworkLens
      ↓
 Network Inspector
 ```
@@ -1066,11 +1066,11 @@ At this point the initial product should already solve the original problem.
 
 V1 is complete when a developer can:
 
-1. Add FlutterLens to a Flutter application.
+1. Add FlutterNetworkLens to a Flutter application.
 2. Connect it to a supported HTTP client.
 3. Build a test/release APK.
 4. Give the APK to a tester.
-5. Tester opens FlutterLens.
+5. Tester opens FlutterNetworkLens.
 6. Tester sees API requests.
 7. Tester opens a request.
 8. Tester can inspect:
@@ -1087,7 +1087,7 @@ V1 is complete when a developer can:
 9. Tester can search/filter requests.
 10. Tester can copy/share a debug report.
 11. Sensitive information is masked.
-12. FlutterLens does not interfere with the application's API behavior.
+12. FlutterNetworkLens does not interfere with the application's API behavior.
 
 If these requirements work reliably, **V1 is successful**.
 
@@ -1118,7 +1118,7 @@ Do not expand the scope until the local inspector workflow is stable.
 
 # Final Product Principle
 
-FlutterLens should answer one simple question:
+FlutterNetworkLens should answer one simple question:
 
 > "What exactly happened between my Flutter application and the backend?"
 

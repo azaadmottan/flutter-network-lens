@@ -1,4 +1,4 @@
-# Publishing FlutterLens
+# Publishing FlutterNetworkLens
 
 This checklist prepares a release; it does not publish the package.
 

@@ -1,16 +1,16 @@
 import 'package:dio/dio.dart';
 
-import '../../core/flutter_lens.dart';
+import '../../core/flutter_network_lens.dart';
 import '../../models/network_error.dart';
 import '../../models/network_request.dart';
 import '../../models/network_response.dart';
 import '../../models/network_transaction.dart';
 
-/// A Dio interceptor that records completed HTTP calls in FlutterLens.
+/// A Dio interceptor that records completed HTTP calls in FlutterNetworkLens.
 ///
 /// Add an instance to the [Dio.interceptors] collection. This interceptor never
 /// changes, resolves, rejects, or retries the original Dio request.
-final class FlutterLensDioInterceptor extends Interceptor {
+final class FlutterNetworkLensDioInterceptor extends Interceptor {
   final Expando<_RequestTiming> _timings = Expando<_RequestTiming>();
   int _sequence = 0;
 
@@ -34,7 +34,7 @@ final class FlutterLensDioInterceptor extends Interceptor {
 
   void _recordResponse(Response<dynamic> response) {
     final timing = _takeTiming(response.requestOptions);
-    FlutterLens.record(
+    FlutterNetworkLens.record(
       NetworkTransaction(
         id: _nextId(timing.startedAt),
         request: _requestFrom(response.requestOptions),
@@ -48,7 +48,7 @@ final class FlutterLensDioInterceptor extends Interceptor {
   void _recordError(DioException error) {
     final timing = _takeTiming(error.requestOptions);
     final response = error.response;
-    FlutterLens.record(
+    FlutterNetworkLens.record(
       NetworkTransaction(
         id: _nextId(timing.startedAt),
         request: _requestFrom(error.requestOptions),

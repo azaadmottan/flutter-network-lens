@@ -12,7 +12,7 @@ final class LocalNetworkStorage implements NetworkStorage {
   LocalNetworkStorage({SharedPreferencesAsync? preferences})
       : _preferences = preferences ?? SharedPreferencesAsync();
 
-  static const _key = 'flutter_lens.transactions.v1';
+  static const _key = 'flutter_network_lens.transactions.v1';
 
   final SharedPreferencesAsync _preferences;
   Future<void> _pendingWrite = Future<void>.value();

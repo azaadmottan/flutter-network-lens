@@ -1,4 +1,4 @@
-part of '../flutter_lens_inspector.dart';
+part of '../flutter_network_lens_inspector.dart';
 
 final class _TransactionDetails extends StatelessWidget {
   const _TransactionDetails({required this.transaction});
@@ -74,7 +74,7 @@ final class _TransactionDetails extends StatelessWidget {
   Future<void> _handleAction(BuildContext context, _TransactionAction action) async {
     final report = NetworkTransactionFormatter.debugReport(
       transaction,
-      environment: FlutterLens.config.environment,
+      environment: FlutterNetworkLens.config.environment,
     );
     switch (action) {
       case _TransactionAction.copyUrl:
@@ -95,7 +95,7 @@ final class _TransactionDetails extends StatelessWidget {
       case _TransactionAction.copyReport:
         await _copy(context, report, 'Debug report copied');
       case _TransactionAction.shareReport:
-        await FlutterLensShare.text(context, report, subject: 'FlutterLens Debug Report');
+        await FlutterNetworkLensShare.text(context, report, subject: 'FlutterNetworkLens Debug Report');
     }
   }
 

@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import '../core/flutter_lens_config.dart';
+import '../core/flutter_network_lens_config.dart';
 import '../models/network_error.dart';
 import '../models/network_request.dart';
 import '../models/network_response.dart';
 import '../models/network_transaction.dart';
 
-/// Removes configured secrets from transactions before FlutterLens retains them.
+/// Removes configured secrets from transactions before FlutterNetworkLens retains them.
 final class NetworkDataMasker {
   NetworkDataMasker._();
 
@@ -16,7 +16,7 @@ final class NetworkDataMasker {
   /// Returns a copy of [transaction] with sensitive values hidden.
   static NetworkTransaction mask(
     NetworkTransaction transaction,
-    FlutterLensConfig config,
+    FlutterNetworkLensConfig config,
   ) =>
       NetworkTransaction(
         id: transaction.id,
@@ -51,7 +51,7 @@ final class NetworkDataMasker {
 
   static Map<String, String> _maskHeaders(
     Map<String, String> headers,
-    FlutterLensConfig config,
+    FlutterNetworkLensConfig config,
   ) =>
       headers.map(
         (key, value) => MapEntry(
@@ -60,7 +60,7 @@ final class NetworkDataMasker {
         ),
       );
 
-  static Object? _maskBody(Object? value, FlutterLensConfig config) {
+  static Object? _maskBody(Object? value, FlutterNetworkLensConfig config) {
     if (value is String) {
       try {
         final decoded = jsonDecode(value);
@@ -72,7 +72,7 @@ final class NetworkDataMasker {
     return _maskValue(value, config);
   }
 
-  static Object? _maskValue(Object? value, FlutterLensConfig config) {
+  static Object? _maskValue(Object? value, FlutterNetworkLensConfig config) {
     if (value is Map<Object?, Object?>) {
       return _maskObject(value, config);
     }
@@ -84,7 +84,7 @@ final class NetworkDataMasker {
 
   static Map<String, Object?> _maskObject(
     Map<Object?, Object?> values,
-    FlutterLensConfig config,
+    FlutterNetworkLensConfig config,
   ) =>
       values.map(
         (key, value) => MapEntry(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lens/flutter_lens.dart';
+import 'package:flutter_network_lens/flutter_network_lens.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await FlutterLens.initialize(environment: 'demo');
+  await FlutterNetworkLens.initialize(environment: 'demo');
   runApp(const _DemoApp());
 }
 
@@ -26,9 +26,9 @@ class _DemoPage extends StatefulWidget {
 }
 
 class _DemoPageState extends State<_DemoPage> {
-  final _client = FlutterLensHttpClient(
+  final _client = FlutterNetworkLensHttpClient(
     MockClient((request) async => http.Response(
-          '{"message":"Hello from FlutterLens","password":"demo-secret"}',
+          '{"message":"Hello from FlutterNetworkLens","password":"demo-secret"}',
           200,
           headers: {'content-type': 'application/json'},
         )),
@@ -51,7 +51,7 @@ class _DemoPageState extends State<_DemoPage> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('FlutterLens demo')),
+        appBar: AppBar(title: const Text('FlutterNetworkLens demo')),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -62,7 +62,7 @@ class _DemoPageState extends State<_DemoPage> {
               ),
               const SizedBox(height: 12),
               OutlinedButton(
-                onPressed: () => FlutterLens.openInspector(context),
+                onPressed: () => FlutterNetworkLens.openInspector(context),
                 child: const Text('Open inspector'),
               ),
             ],

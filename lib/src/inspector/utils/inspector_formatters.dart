@@ -1,4 +1,4 @@
-part of '../flutter_lens_inspector.dart';
+part of '../flutter_network_lens_inspector.dart';
 
 String _pathWithQuery(Uri uri) => uri.hasQuery ? '${uri.path}?${uri.query}' : uri.path;
 

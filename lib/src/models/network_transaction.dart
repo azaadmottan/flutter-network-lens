@@ -2,7 +2,7 @@ import 'network_error.dart';
 import 'network_request.dart';
 import 'network_response.dart';
 
-/// A complete network request lifecycle captured by FlutterLens.
+/// A complete network request lifecycle captured by FlutterNetworkLens.
 final class NetworkTransaction {
   /// Creates a captured transaction.
   const NetworkTransaction({

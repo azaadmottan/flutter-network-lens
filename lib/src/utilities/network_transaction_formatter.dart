@@ -11,7 +11,7 @@ final class NetworkTransactionFormatter {
     NetworkTransaction transaction, {
     String? environment,
   }) {
-    final buffer = StringBuffer('FlutterLens Debug Report\n\n');
+    final buffer = StringBuffer('FlutterNetworkLens Debug Report\n\n');
     if (environment != null && environment.isNotEmpty) {
       buffer.writeln('Environment: $environment');
     }
@@ -33,7 +33,7 @@ final class NetworkTransactionFormatter {
 
   /// Produces a cURL command for [transaction].
   ///
-  /// The supplied transaction is already masked by FlutterLens before retention.
+  /// The supplied transaction is already masked by FlutterNetworkLens before retention.
   static String curl(NetworkTransaction transaction) {
     final request = transaction.request;
     final arguments = <String>[

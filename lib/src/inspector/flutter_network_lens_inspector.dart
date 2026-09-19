@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../core/flutter_lens.dart';
+import '../core/flutter_network_lens.dart';
 import '../models/network_transaction.dart';
-import '../sharing/flutter_lens_share.dart';
+import '../sharing/flutter_network_lens_share.dart';
 import '../utilities/network_transaction_formatter.dart';
 
 part 'screens/transaction_details.dart';
@@ -11,15 +11,15 @@ part 'utils/inspector_formatters.dart';
 part 'widgets/inspector_widgets.dart';
 
 /// Full-screen, in-app UI for browsing captured network transactions.
-final class FlutterLensInspector extends StatefulWidget {
-  /// Creates the FlutterLens inspector.
-  const FlutterLensInspector({super.key});
+final class FlutterNetworkLensInspector extends StatefulWidget {
+  /// Creates the FlutterNetworkLens inspector.
+  const FlutterNetworkLensInspector({super.key});
 
   @override
-  State<FlutterLensInspector> createState() => _FlutterLensInspectorState();
+  State<FlutterNetworkLensInspector> createState() => _FlutterNetworkLensInspectorState();
 }
 
-final class _FlutterLensInspectorState extends State<FlutterLensInspector> {
+final class _FlutterNetworkLensInspectorState extends State<FlutterNetworkLensInspector> {
   final TextEditingController _searchController = TextEditingController();
   _TransactionFilter _filter = _TransactionFilter.all;
 
@@ -32,7 +32,7 @@ final class _FlutterLensInspectorState extends State<FlutterLensInspector> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-          title: const Text('FlutterLens'),
+          title: const Text('FlutterNetworkLens'),
           actions: [
             IconButton(
               tooltip: 'Clear network history',
@@ -42,8 +42,8 @@ final class _FlutterLensInspectorState extends State<FlutterLensInspector> {
           ],
         ),
         body: StreamBuilder<List<NetworkTransaction>>(
-          stream: FlutterLens.transactionChanges,
-          initialData: FlutterLens.transactions,
+          stream: FlutterNetworkLens.transactionChanges,
+          initialData: FlutterNetworkLens.transactions,
           builder: (context, snapshot) {
             final transactions = snapshot.data ?? const <NetworkTransaction>[];
             final visible = _filterTransactions(transactions);
@@ -94,7 +94,7 @@ final class _FlutterLensInspectorState extends State<FlutterLensInspector> {
   }
 
   Future<void> _confirmClear() async {
-    if (FlutterLens.transactions.isEmpty) {
+    if (FlutterNetworkLens.transactions.isEmpty) {
       return;
     }
     final confirmed = await showDialog<bool>(
@@ -115,7 +115,7 @@ final class _FlutterLensInspectorState extends State<FlutterLensInspector> {
       ),
     );
     if (confirmed ?? false) {
-      FlutterLens.clear();
+      FlutterNetworkLens.clear();
     }
   }
 }
