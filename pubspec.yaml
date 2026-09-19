@@ -3,9 +3,9 @@ description: An in-app network traffic tracker and inspector for Flutter test an
 
 version: 0.1.0
 
-homepage: https://github.com/azaadmottan/flutter-lens
-repository: https://github.com/azaadmottan/flutter-lens
-issue_tracker: https://github.com/azaadmottan/flutter-lens/issues
+homepage: https://github.com/azaadmottan/flutter-network-lens
+repository: https://github.com/azaadmottan/flutter-network-lens
+issue_tracker: https://github.com/azaadmottan/flutter-network-lens/issues
 topics:
   - networking
   - debugging

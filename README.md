@@ -212,7 +212,7 @@ flutter test
 ```
 
 Report bugs with reproduction steps, Flutter version, and client integration at
-[GitHub Issues](https://github.com/azaadmottan/flutter-lens/issues). Remove private
+[GitHub Issues](https://github.com/azaadmottan/flutter-network-lens/issues). Remove private
 request data from reports.
 
 The [project plan](docs/PROJECT_PLAN.md) describes intended work, including
