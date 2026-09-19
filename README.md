@@ -9,7 +9,7 @@ and duration directly in your app, without connecting to a development machine.
 - Capture completed requests and client errors from Dio, `package:http`, and GetX GetConnect.
 - Browse history and search by URL, method, or status.
 - Inspect request and response bodies, headers, query parameters, and timing.
-- Restore local history with `shared_preferences` and limit retained transactions.
+- Restore local history with `shared_preferences` whenever the inspector opens and limit retained transactions.
 - Mask configured headers and structured fields before recording new entries.
 - Open the inspector from your own button or developer menu.
 - Copy request details, a masked cURL command, or a full debug report.

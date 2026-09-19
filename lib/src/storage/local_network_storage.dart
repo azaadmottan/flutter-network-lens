@@ -19,6 +19,7 @@ final class LocalNetworkStorage implements NetworkStorage {
 
   @override
   Future<List<NetworkTransaction>> readAll() async {
+    await _pendingWrite;
     final encoded = await _preferences.getStringList(_key) ?? const <String>[];
     final transactions = <NetworkTransaction>[];
 

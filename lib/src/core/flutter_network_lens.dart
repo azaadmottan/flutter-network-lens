@@ -22,6 +22,8 @@ final class FlutterNetworkLens {
   static final StreamController<List<NetworkTransaction>> _changes =
       StreamController<List<NetworkTransaction>>.broadcast();
   static NetworkStorage? _storage;
+  static Future<void> _pendingPersistence = Future<void>.value();
+  static int _historyRevision = 0;
 
   /// Initializes the in-memory capture layer.
   ///
@@ -44,17 +46,8 @@ final class FlutterNetworkLens {
     );
     _storage = storage ?? LocalNetworkStorage();
 
-    try {
-      final restored = await _storage!.readAll();
-      _transactions
-        ..clear()
-        ..addAll(restored);
-      _trimToLimit();
-      _emit();
-      unawaited(_persist());
-    } catch (_) {
-      // Persistence failures must not block the host application.
-    }
+    await refreshHistory();
+    unawaited(_schedulePersist());
   }
 
   /// Current FlutterNetworkLens configuration.
@@ -67,6 +60,34 @@ final class FlutterNetworkLens {
   /// Stream of transaction snapshots, newest first.
   static Stream<List<NetworkTransaction>> get transactionChanges => _changes.stream;
 
+  /// Reloads persisted history into memory.
+  ///
+  /// The inspector calls this when it opens so a new app session always shows
+  /// the latest locally saved transactions. Storage failures are ignored to
+  /// keep FlutterNetworkLens observational.
+  static Future<void> refreshHistory() async {
+    final storage = _storage;
+    if (storage == null) {
+      return;
+    }
+
+    await _pendingPersistence;
+    final revision = _historyRevision;
+    try {
+      final restored = await storage.readAll();
+      if (revision != _historyRevision) {
+        return;
+      }
+      _transactions
+        ..clear()
+        ..addAll(restored);
+      _trimToLimit();
+      _emit();
+    } catch (_) {
+      // Persistence failures must not block the host application.
+    }
+  }
+
   /// Records a completed request lifecycle.
   ///
   /// This method deliberately never throws: integrations must not allow a
@@ -78,9 +99,10 @@ final class FlutterNetworkLens {
 
     try {
       _transactions.insert(0, NetworkDataMasker.mask(transaction, _config));
+      _historyRevision++;
       _trimToLimit();
       _emit();
-      unawaited(_persist());
+      unawaited(_schedulePersist());
     } catch (_) {
       // FlutterNetworkLens is observational and must stay invisible to the host app.
     }
@@ -89,10 +111,11 @@ final class FlutterNetworkLens {
   /// Removes all in-memory transactions.
   static void clear() {
     _transactions.clear();
+    _historyRevision++;
     _emit();
     final storage = _storage;
     if (storage != null) {
-      unawaited(_clearPersistedHistory(storage));
+      unawaited(_scheduleClear(storage));
     }
   }
 
@@ -114,6 +137,18 @@ final class FlutterNetworkLens {
     if (!_changes.isClosed) {
       _changes.add(transactions);
     }
+  }
+
+  static Future<void> _schedulePersist() {
+    _pendingPersistence = _pendingPersistence.then((_) => _persist());
+    return _pendingPersistence;
+  }
+
+  static Future<void> _scheduleClear(NetworkStorage storage) {
+    _pendingPersistence = _pendingPersistence.then(
+      (_) => _clearPersistedHistory(storage),
+    );
+    return _pendingPersistence;
   }
 
   static Future<void> _persist() async {

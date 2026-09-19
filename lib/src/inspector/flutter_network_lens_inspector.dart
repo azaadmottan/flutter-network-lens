@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -22,6 +24,13 @@ final class FlutterNetworkLensInspector extends StatefulWidget {
 final class _FlutterNetworkLensInspectorState extends State<FlutterNetworkLensInspector> {
   final TextEditingController _searchController = TextEditingController();
   _TransactionFilter _filter = _TransactionFilter.all;
+  bool _isRefreshing = true;
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_refreshHistory());
+  }
 
   @override
   void dispose() {
@@ -41,32 +50,44 @@ final class _FlutterNetworkLensInspectorState extends State<FlutterNetworkLensIn
             ),
           ],
         ),
-        body: StreamBuilder<List<NetworkTransaction>>(
-          stream: FlutterNetworkLens.transactionChanges,
-          initialData: FlutterNetworkLens.transactions,
-          builder: (context, snapshot) {
-            final transactions = snapshot.data ?? const <NetworkTransaction>[];
-            final visible = _filterTransactions(transactions);
-            return Column(
-              children: [
-                _InspectorSearchField(
-                  controller: _searchController,
-                  onChanged: () => setState(() {}),
-                ),
-                _FilterBar(
-                  selected: _filter,
-                  onChanged: (filter) => setState(() => _filter = filter),
-                ),
-                Expanded(
-                  child: visible.isEmpty
-                      ? _EmptyState(hasHistory: transactions.isNotEmpty)
-                      : _TransactionList(transactions: visible),
-                ),
-              ],
-            );
-          },
+        body: Stack(
+          children: [
+            StreamBuilder<List<NetworkTransaction>>(
+              stream: FlutterNetworkLens.transactionChanges,
+              initialData: FlutterNetworkLens.transactions,
+              builder: (context, snapshot) {
+                final transactions = snapshot.data ?? const <NetworkTransaction>[];
+                final visible = _filterTransactions(transactions);
+                return Column(
+                  children: [
+                    _InspectorSearchField(
+                      controller: _searchController,
+                      onChanged: () => setState(() {}),
+                    ),
+                    _FilterBar(
+                      selected: _filter,
+                      onChanged: (filter) => setState(() => _filter = filter),
+                    ),
+                    Expanded(
+                      child: visible.isEmpty
+                          ? _EmptyState(hasHistory: transactions.isNotEmpty)
+                          : _TransactionList(transactions: visible),
+                    ),
+                  ],
+                );
+              },
+            ),
+            if (_isRefreshing) const Align(alignment: Alignment.topCenter, child: LinearProgressIndicator()),
+          ],
         ),
       );
+
+  Future<void> _refreshHistory() async {
+    await FlutterNetworkLens.refreshHistory();
+    if (mounted) {
+      setState(() => _isRefreshing = false);
+    }
+  }
 
   List<NetworkTransaction> _filterTransactions(
     List<NetworkTransaction> transactions,
