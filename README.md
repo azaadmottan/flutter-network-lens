@@ -19,22 +19,11 @@ FlutterNetworkLens has no backend, accounts, or cloud sync.
 
 ## Installation
 
-Once the package is published on pub.dev:
-
 ```sh
 flutter pub add flutter_network_lens
 ```
 
-Until then, use a local checkout:
-
-```yaml
-dependencies:
-  flutter_network_lens:
-    path: ../flutter-network-lens
-```
-
-Adjust the path to your checkout. Use a current stable Flutter SDK; validation of
-the oldest supported SDK is still pending before publication.
+This package supports Flutter 3.27.0 or later and Dart 3.3.0 or later.
 
 ## Initialize
 
@@ -215,9 +204,7 @@ Report bugs with reproduction steps, Flutter version, and client integration at
 [GitHub Issues](https://github.com/azaadmottan/flutter-network-lens/issues). Remove private
 request data from reports.
 
-The [project plan](docs/PROJECT_PLAN.md) describes intended work, including
-features beyond this version. See [CHANGELOG.md](CHANGELOG.md) for release notes
-and [the publishing checklist](docs/PUBLISHING.md) for remaining release checks.
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## License
 
