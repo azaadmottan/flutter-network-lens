@@ -55,6 +55,38 @@ when `enabled` is omitted; the explicit build flag above defaults to `false`.
 Disabling capture stops new entries, but does not erase history or hide the
 inspector. Gate your inspector button with the same flag if needed.
 
+## Production safety
+
+FlutterNetworkLens is a diagnostic tool. A release-mode build can be useful for
+controlled QA, but do not enable capture or expose the inspector in a public
+App Store or Google Play production build unless your team has explicitly
+assessed the privacy and security implications.
+
+Use an opt-in build flag that defaults to `false`, and use the same flag for
+both initialization and the UI entry point:
+
+```dart
+const enableNetworkLens = bool.fromEnvironment(
+  'ENABLE_FLUTTER_NETWORK_LENS',
+  defaultValue: false,
+);
+
+await FlutterNetworkLens.initialize(enabled: enableNetworkLens);
+
+if (enableNetworkLens) {
+  FilledButton(
+    onPressed: () => FlutterNetworkLens.openInspector(context),
+    child: const Text('Open network inspector'),
+  );
+}
+```
+
+Masking is configurable but not comprehensive: values in URLs, free-form text,
+error messages, and stack traces are not automatically redacted. Captured
+history is stored locally and is not encrypted. The host application is
+responsible for deciding when this package is enabled and which builds expose
+its UI.
+
 ## Connect your HTTP client
 
 ### Dio
