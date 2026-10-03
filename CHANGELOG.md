@@ -2,9 +2,6 @@
 
 ## Unreleased
 
-- Rename the package and public API from FlutterLens to FlutterNetworkLens to
-  make its network-tracking purpose clear. This is a breaking rename.
-
 ## 0.1.0
 
 Initial implementation, prepared for the first release.
